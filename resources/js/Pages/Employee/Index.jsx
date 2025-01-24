@@ -124,7 +124,7 @@ export default function Index({ employees, query, sortColumn, sortDirection }) {
                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                             } ${!link.url && 'cursor-not-allowed opacity-50'}`}
                     >
-                        {link.label.replace('&laquo;', 'Previous').replace('&raquo;', 'Next')}
+                        {link.label.replace('&laquo; Previous', 'Previous').replace('Next &raquo;', 'Next')}
                     </button>
                 ))}
             </div>
