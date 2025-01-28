@@ -9,8 +9,6 @@ use Inertia\Inertia;
 
 use Illuminate\Support\Facades\Log;
 
-use function Laravel\Prompts\table;
-
 class EmployeeController extends Controller
 {
     /**
@@ -23,6 +21,8 @@ class EmployeeController extends Controller
         $sortDirection = $request->input('direction', 'asc');
 
         $employees = DB::table('employees')
+            ->leftJoin('photo_emp', 'employees.emp_no', '=', 'photo_emp.emp_no')
+            ->select('employees.*', 'photo_emp.photo_path')
             ->where('first_name', 'like', '%' . $query . '%')
             ->orWhere('last_name', 'like', '%' . $query . '%')
             ->orderBy($sortColumn, $sortDirection)
@@ -62,9 +62,10 @@ class EmployeeController extends Controller
                 'hire_date' => 'required|date',
                 'birth_date' => 'required|date',
                 'dept_no' => 'required|exists:departments,dept_no',
+                'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
             ]);
 
-            DB::transaction(function () use ($validated) {
+            DB::transaction(function () use ($validated, $request) {
                 // Generate a new employee number
                 $latestEmpNo = DB::table('employees')->max('emp_no') ?? 0;
                 $newEmpNo = $latestEmpNo + 1;
@@ -86,16 +87,23 @@ class EmployeeController extends Controller
                     'from_date' => now(),
                     'to_date' => '9999-01-01',
                 ]);
+
+                // Save photo if provided
+                if ($request->hasFile('photo')) {
+                    $photoPath = $request->file('photo')->store('photos', 'public'); // เก็บใน storage/app/public/photos
+                    DB::table('photo_emp')->insert([
+                        'emp_no' => $newEmpNo,
+                        'photo_path' => $photoPath,
+                    ]);
+                }
             });
 
             Log::info($request->all());
-
             return redirect()->route('employees.index')
                 ->with('success', 'Employee created successfully.');
 
         } catch (\Exception $e) {
             Log::error($e->getMessage());
-
             return back()->with('error', 'Failed to create employee. Please try again.');
         }
     }

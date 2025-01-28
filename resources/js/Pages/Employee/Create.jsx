@@ -10,11 +10,14 @@ export default function Create({ departments }) {
         gender: '',
         hire_date: '',
         dept_no: '',
+        photo: null, // เพิ่ม photo
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post('/employee'); // ส่งข้อมูลไปยัง `store` method
+        post('/employee', {
+            forceFormData: true,
+        }); // ส่งข้อมูลไปยัง `store` method
     };
 
     const { flash } = usePage().props;
@@ -105,6 +108,17 @@ export default function Create({ departments }) {
                         ))}
                     </select>
                     {errors.dept_no && <span className="text-red-500 text-sm">{errors.dept_no}</span>}
+                </div>
+
+                {/* Photo */}
+                <div>
+                    <label className="block font-medium">Photo:</label>
+                    <input
+                        type="file"
+                        onChange={(e) => setData('photo', e.target.files[0])}
+                        className="w-full p-2 border rounded-md"
+                    />
+                    {errors.photo && <span className="text-red-500 text-sm">{errors.photo}</span>}
                 </div>
 
                 <button
