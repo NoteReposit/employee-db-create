@@ -23,6 +23,8 @@ export default function Index({ employees, query, sortColumn, sortDirection }) {
 
     const { flash } = usePage().props;
 
+    console.log(employees.links);
+
     return (
         <div className="p-8 bg-gray-100 min-h-screen">
             <h1 className="text-3xl font-bold text-gray-800 mb-6">Employee List</h1>
@@ -124,7 +126,7 @@ export default function Index({ employees, query, sortColumn, sortDirection }) {
                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                             } ${!link.url && 'cursor-not-allowed opacity-50'}`}
                     >
-                        {link.label.replace('&laquo;', 'Previous').replace('&raquo;', 'Next')}
+                        {link.label.replace('&laquo; Previous', 'Previous').replace('Next &raquo;', 'Next')}
                     </button>
                 ))}
             </div>

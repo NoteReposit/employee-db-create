@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -12,9 +13,8 @@ return new class extends Migration {
     {
         Schema::create('photo_emp', function (Blueprint $table) {
             $table->id();
-            $table->integer('emp_no'); // เชื่อมกับ employees.emp_no
+            $table->Integer('emp_no'); // เชื่อมกับ employees.emp_no
             $table->string('photo_path'); // เก็บ path ของรูปภาพ
-            $table->timestamps();
 
             // สร้าง Foreign Key เชื่อมความสัมพันธ์
             $table->foreign('emp_no')->references('emp_no')->on('employees')->onDelete('cascade');

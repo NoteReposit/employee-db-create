@@ -59,8 +59,8 @@ class EmployeeController extends Controller
                 'first_name' => 'required|string|max:14',
                 'last_name' => 'required|string|max:16',
                 'gender' => 'required|in:M,F',
-                'hire_date' => 'required|date',
                 'birth_date' => 'required|date',
+                'hire_date' => 'required|date',
                 'dept_no' => 'required|exists:departments,dept_no',
                 'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
             ]);
@@ -76,8 +76,8 @@ class EmployeeController extends Controller
                     'first_name' => $validated['first_name'],
                     'last_name' => $validated['last_name'],
                     'gender' => $validated['gender'],
+                    'birth_date' => $validated['birth_date'],
                     'hire_date' => $validated['hire_date'],
-                    'birth_date' => $validated['hire_date'],
                 ]);
 
                 // Link the employee to the department
@@ -90,7 +90,7 @@ class EmployeeController extends Controller
 
                 // Save photo if provided
                 if ($request->hasFile('photo')) {
-                    $photoPath = $request->file('photo')->store('photos', 'public'); // เก็บใน storage/app/public/photos
+                    $photoPath = $request->file('photo')->store('photos', 'public'); // storage/app/public/photos
                     DB::table('photo_emp')->insert([
                         'emp_no' => $newEmpNo,
                         'photo_path' => $photoPath,
@@ -102,6 +102,8 @@ class EmployeeController extends Controller
             return redirect()->route('employees.index')
                 ->with('success', 'Employee created successfully.');
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return back()->with('error', 'Failed to create employee. Please try again.');
